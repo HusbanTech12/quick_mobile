@@ -16,12 +16,14 @@ import Badge from '../../components/ui/Badge';
 import ProductCard from '../../components/ProductCard';
 import Skeleton from '../../components/ui/Skeleton';
 import { useCartStore } from '../../store/cartStore';
+import { useToast } from '../../components/ui/Toast';
 import { formatPrice } from '../../lib/utils';
 
 export default function ProductDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const addToCart = useCartStore((s) => s.addToCart);
+  const { showToast } = useToast();
 
   const { data: product, isLoading, isError, refetch } = useProduct(id);
   const { data: related } = useProducts({ category: product?.category, limit: 10 });
@@ -111,6 +113,7 @@ export default function ProductDetailScreen() {
               className="bg-brand rounded-xl py-4 flex-row items-center justify-center gap-2"
               onPress={() => {
                 addToCart(product, quantity);
+                showToast({ message: `${product.name} added to cart`, type: 'success' });
                 setQuantity(1);
               }}
               activeOpacity={0.8}

@@ -6,6 +6,7 @@ import { useProducts, useCategories } from '../../hooks/useProducts';
 import ProductCard from '../../components/ProductCard';
 import Skeleton from '../../components/ui/Skeleton';
 import { useCartStore } from '../../store/cartStore';
+import { useToast } from '../../components/ui/Toast';
 import type { Product } from '../../types';
 
 const SKELETON_IDS = [1, 2, 3, 4];
@@ -13,17 +14,26 @@ const SKELETON_IDS = [1, 2, 3, 4];
 export default function HomeScreen() {
   const router = useRouter();
   const addToCart = useCartStore((s) => s.addToCart);
+  const { showToast } = useToast();
   const [refreshing, setRefreshing] = useState(false);
 
-  const { data: featured, isLoading: featuredLoading } = useProducts({ featured_only: true, limit: 10 });
+  const {
+    data: featured,
+    isLoading: featuredLoading,
+    refetch: refetchFeatured,
+  } = useProducts({ featured_only: true, limit: 10 });
   const { data: categories } = useCategories();
-  const { data: recent, isLoading: recentLoading } = useProducts({ sort_by: 'created_at', sort_order: 'desc', limit: 10 });
+  const {
+    data: recent,
+    isLoading: recentLoading,
+    refetch: refetchRecent,
+  } = useProducts({ sort_by: 'created_at', sort_order: 'desc', limit: 10 });
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([featured?.refetch?.(), recent?.refetch?.()]);
+    await Promise.all([refetchFeatured(), refetchRecent()]);
     setRefreshing(false);
-  }, []);
+  }, [refetchFeatured, refetchRecent]);
 
   const renderSkeletonGrid = () => (
     <FlatList
@@ -108,7 +118,10 @@ export default function HomeScreen() {
                 <ProductCard
                   product={item}
                   onPress={() => router.push(`/product/${item.id}`)}
-                  onAddToCart={() => addToCart(item)}
+                  onAddToCart={() => {
+                    addToCart(item);
+                    showToast({ message: `${item.name} added to cart`, type: 'success' });
+                  }}
                 />
               )}
             />
@@ -146,7 +159,10 @@ export default function HomeScreen() {
                 <ProductCard
                   product={item}
                   onPress={() => router.push(`/product/${item.id}`)}
-                  onAddToCart={() => addToCart(item)}
+                  onAddToCart={() => {
+                    addToCart(item);
+                    showToast({ message: `${item.name} added to cart`, type: 'success' });
+                  }}
                 />
               )}
             />

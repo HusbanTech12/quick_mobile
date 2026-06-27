@@ -16,6 +16,7 @@ import ProductCard from '../../components/ProductCard';
 import Skeleton from '../../components/ui/Skeleton';
 import EmptyState from '../../components/ui/EmptyState';
 import { useCartStore } from '../../store/cartStore';
+import { useToast } from '../../components/ui/Toast';
 import type { Product } from '../../types';
 
 const SKELETON_IDS = [1, 2, 3, 4, 5, 6];
@@ -31,6 +32,7 @@ export default function ProductsScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ category?: string }>();
   const addToCart = useCartStore((s) => s.addToCart);
+  const { showToast } = useToast();
 
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -41,7 +43,7 @@ export default function ProductsScreen() {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [skip, setSkip] = useState(0);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const { data: categories } = useCategories();
 
@@ -110,7 +112,10 @@ export default function ProductsScreen() {
     <ProductCard
       product={item}
       onPress={() => router.push(`/product/${item.id}`)}
-      onAddToCart={() => addToCart(item)}
+      onAddToCart={() => {
+        addToCart(item);
+        showToast({ message: `${item.name} added to cart`, type: 'success' });
+      }}
     />
   ), []);
 
