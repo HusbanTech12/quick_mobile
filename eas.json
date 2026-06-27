@@ -17,10 +17,10 @@
       "autoIncrement": true,
       "android": {
         "buildType": "aab"
-      },
-      "env": {
-        "EXPO_PUBLIC_API_URL": "https://quick-store-omf3.onrender.com"
       }
     }
+  },
+  "submit": {
+    "production": {}
   }
 }
