@@ -12,12 +12,21 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { StripeProvider, CardField } from '@stripe/stripe-react-native';
 import { useCartStore } from '../store/cartStore';
 import { useCartTotals, useCreateOrder } from '../hooks/useCart';
 import CheckoutStepper from '../components/CheckoutStepper';
 import { formatPrice } from '../lib/utils';
 
+let StripeProvider: any = null;
+let CardField: any = null;
+
+if (Platform.OS !== 'web') {
+  const Stripe = require('@stripe/stripe-react-native');
+  StripeProvider = Stripe.StripeProvider;
+  CardField = Stripe.CardField;
+}
+
+const isNative = Platform.OS !== 'web';
 const STRIPE_KEY = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || '';
 
 interface ShippingInfo {
@@ -104,7 +113,7 @@ function ShippingStep({
         onPress={validate}
         activeOpacity={0.8}
       >
-        <Text className="text-foreground font-bold text-base">Continue to Payment</Text>
+        <Text className="text-foreground font-bold text-base">Continue{isNative ? ' to Payment' : ''}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -117,6 +126,8 @@ function PaymentStep({ onNext }: { onNext: () => void }) {
   const handleContinue = () => {
     onNext();
   };
+
+  if (!CardField) return null;
 
   return (
     <View className="px-4 gap-4">
@@ -138,7 +149,7 @@ function PaymentStep({ onNext }: { onNext: () => void }) {
             height: 50,
             marginVertical: 8,
           }}
-          onCardChange={(details) => setCardComplete(details.complete)}
+          onCardChange={(details: { complete: boolean }) => setCardComplete(details.complete)}
         />
       </View>
       <TouchableOpacity
@@ -229,45 +240,51 @@ export default function CheckoutScreen() {
     }
   };
 
-  return (
-    <StripeProvider publishableKey={STRIPE_KEY}>
-      <SafeAreaView className="flex-1 bg-background">
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+  const stepLabels = isNative ? ['Shipping', 'Payment', 'Review'] : ['Shipping', 'Review'];
+
+  const content = (
+    <SafeAreaView className="flex-1 bg-background">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        className="flex-1"
+      >
+        <View className="flex-row items-center px-4 py-3 border-b border-border">
+          <TouchableOpacity onPress={() => router.back()}>
+            <Text className="text-brand font-semibold">Back</Text>
+          </TouchableOpacity>
+          <Text className="text-foreground font-bold text-lg flex-1 text-center mr-10">
+            Checkout
+          </Text>
+        </View>
+        <CheckoutStepper currentStep={step} steps={stepLabels} />
+        <ScrollView
           className="flex-1"
+          contentContainerClassName="pb-8"
+          keyboardShouldPersistTaps="handled"
         >
-          <View className="flex-row items-center px-4 py-3 border-b border-border">
-            <TouchableOpacity onPress={() => router.back()}>
-              <Text className="text-brand font-semibold">Back</Text>
-            </TouchableOpacity>
-            <Text className="text-foreground font-bold text-lg flex-1 text-center mr-10">
-              Checkout
-            </Text>
-          </View>
-          <CheckoutStepper currentStep={step} />
-          <ScrollView
-            className="flex-1"
-            contentContainerClassName="pb-8"
-            keyboardShouldPersistTaps="handled"
-          >
-            {step === 1 && (
-              <ShippingStep shipping={shipping} onChange={setShipping} onNext={() => setStep(2)} />
-            )}
-            {step === 2 && <PaymentStep onNext={() => setStep(3)} />}
-            {step === 3 && (
-              <ReviewStep shipping={shipping} onPlaceOrder={handlePlaceOrder} />
-            )}
-          </ScrollView>
-          {createOrder.isPending && (
-            <View className="absolute inset-0 bg-background/80 items-center justify-center">
-              <View className="bg-card rounded-xl p-6 items-center gap-3">
-                <ActivityIndicator size="large" color="#0066ff" />
-                <Text className="text-foreground font-semibold">Placing your order...</Text>
-              </View>
-            </View>
+          {step === 1 && (
+            <ShippingStep shipping={shipping} onChange={setShipping} onNext={() => setStep(isNative ? 2 : 2)} />
           )}
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-    </StripeProvider>
+          {step === 2 && isNative && <PaymentStep onNext={() => setStep(3)} />}
+          {((step === 2 && !isNative) || (step === 3 && isNative)) && (
+            <ReviewStep shipping={shipping} onPlaceOrder={handlePlaceOrder} />
+          )}
+        </ScrollView>
+        {createOrder.isPending && (
+          <View className="absolute inset-0 bg-background/80 items-center justify-center">
+            <View className="bg-card rounded-xl p-6 items-center gap-3">
+              <ActivityIndicator size="large" color="#0066ff" />
+              <Text className="text-foreground font-semibold">Placing your order...</Text>
+            </View>
+          </View>
+        )}
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
+
+  if (isNative && StripeProvider) {
+    return <StripeProvider publishableKey={STRIPE_KEY}>{content}</StripeProvider>;
+  }
+
+  return content;
 }

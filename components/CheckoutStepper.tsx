@@ -1,15 +1,17 @@
 import { View, Text } from 'react-native';
 
-const STEPS = ['Shipping', 'Payment', 'Review'];
+const DEFAULT_STEPS = ['Shipping', 'Payment', 'Review'];
 
 interface CheckoutStepperProps {
   currentStep: number;
+  steps?: string[];
 }
 
-export default function CheckoutStepper({ currentStep }: CheckoutStepperProps) {
+export default function CheckoutStepper({ currentStep, steps }: CheckoutStepperProps) {
+  const stepLabels = steps || DEFAULT_STEPS;
   return (
     <View className="flex-row items-center justify-center px-4 py-4">
-      {STEPS.map((label, index) => {
+      {stepLabels.map((label, index) => {
         const stepNum = index + 1;
         const isActive = stepNum === currentStep;
         const isCompleted = stepNum < currentStep;
@@ -36,7 +38,7 @@ export default function CheckoutStepper({ currentStep }: CheckoutStepperProps) {
                 {label}
               </Text>
             </View>
-            {index < STEPS.length - 1 && (
+            {index < stepLabels.length - 1 && (
               <View
                 className={`h-0.5 w-10 mx-2 mb-4 ${
                   stepNum <= currentStep ? 'bg-brand' : 'bg-border'
