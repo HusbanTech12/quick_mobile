@@ -6,7 +6,6 @@ const config = getDefaultConfig(__dirname);
 
 const nativeWindConfig = withNativeWind(config, { input: './global.css' });
 
-// Preserve NativeWind's resolveRequest and add Stripe mock for web
 const originalResolveRequest = nativeWindConfig.resolver.resolveRequest;
 
 nativeWindConfig.resolver.resolveRequest = (context, moduleName, platform) => {
