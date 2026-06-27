@@ -7,7 +7,7 @@ export interface User {
 }
 
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   description: string;
   price: number;
@@ -15,7 +15,6 @@ export interface Product {
   image_url: string;
   stock_quantity: number;
   is_featured: boolean;
-  rating: number;
 }
 
 export interface CartItem {
@@ -24,7 +23,7 @@ export interface CartItem {
 }
 
 export interface Order {
-  id: number;
+  id: string;
   user_id: number;
   total_amount: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
@@ -33,7 +32,7 @@ export interface Order {
 }
 
 export interface OrderItem {
-  product_id: number;
+  product_id: string;
   product_name: string;
   quantity: number;
   unit_price: number;
