@@ -1,16 +1,25 @@
 const { getDefaultConfig } = require('expo/metro-config');
+const { withNativeWind } = require('nativewind/metro');
 const path = require('path');
 
 const config = getDefaultConfig(__dirname);
 
-config.resolver.resolveRequest = (context, moduleName, platform) => {
+const nativeWindConfig = withNativeWind(config, { input: './global.css' });
+
+// Preserve NativeWind's resolveRequest and add Stripe mock for web
+const originalResolveRequest = nativeWindConfig.resolver.resolveRequest;
+
+nativeWindConfig.resolver.resolveRequest = (context, moduleName, platform) => {
   if (platform === 'web' && moduleName === '@stripe/stripe-react-native') {
     return {
       type: 'sourceFile',
       filePath: path.join(__dirname, 'stripe-web-mock.js'),
     };
   }
+  if (originalResolveRequest) {
+    return originalResolveRequest(context, moduleName, platform);
+  }
   return context.resolveRequest(context, moduleName, platform);
 };
 
-module.exports = config;
+module.exports = nativeWindConfig;
