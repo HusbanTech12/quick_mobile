@@ -45,6 +45,9 @@ export default function CartScreen() {
           )}
           showsVerticalScrollIndicator={false}
           contentContainerClassName="pb-4"
+          removeClippedSubviews
+          maxToRenderPerBatch={10}
+          windowSize={5}
         />
       </View>
       <View className="bg-card border-t border-border px-4 py-4 gap-2">

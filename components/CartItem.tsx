@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { Image } from 'expo-image';
 import { Minus, Plus, Trash2 } from 'lucide-react-native';
 import { formatPrice } from '../lib/utils';
 import type { CartItem as CartItemType } from '../types';
@@ -16,8 +17,10 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
     <View className="flex-row bg-card rounded-xl p-3 mb-3 items-center">
       <Image
         source={{ uri: product.image_url }}
-        className="w-20 h-20 rounded-lg"
-        resizeMode="cover"
+        style={{ width: 80, height: 80, borderRadius: 8 }}
+        contentFit="cover"
+        cachePolicy="memory-disk"
+        transition={200}
       />
       <View className="flex-1 ml-3">
         <Text className="text-foreground font-semibold text-sm" numberOfLines={2}>

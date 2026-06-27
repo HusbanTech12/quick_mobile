@@ -4,10 +4,10 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  Image,
   FlatList,
   ActivityIndicator,
 } from 'react-native';
+import { Image } from 'expo-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, Minus, Plus, ShoppingCart } from 'lucide-react-native';
@@ -66,8 +66,10 @@ export default function ProductDetailScreen() {
         <View className="relative">
           <Image
             source={{ uri: product.image_url }}
-            className="w-full aspect-square"
-            resizeMode="cover"
+            style={{ width: '100%', aspectRatio: 1 }}
+            contentFit="cover"
+            cachePolicy="memory-disk"
+            transition={300}
           />
           <TouchableOpacity
             className="absolute top-4 left-4 bg-card/80 rounded-full p-2"

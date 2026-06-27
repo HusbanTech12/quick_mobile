@@ -13,11 +13,14 @@
     "userInterfaceStyle": "dark",
     "scheme": "quickstore",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "UIStatusBarStyle": "UIStatusBarStyleLightContent"
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#09090b",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -32,7 +35,8 @@
       "expo-router",
       "expo-secure-store",
       "expo-splash-screen",
-      "@stripe/stripe-react-native"
+      "@stripe/stripe-react-native",
+      "expo-image"
     ]
   }
 }

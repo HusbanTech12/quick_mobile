@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { Image } from 'expo-image';
 import { Plus } from 'lucide-react-native';
 import Badge from './ui/Badge';
 import { formatPrice } from '../lib/utils';
@@ -19,8 +20,10 @@ export default function ProductCard({ product, onPress, onAddToCart }: ProductCa
     >
       <Image
         source={{ uri: product.image_url }}
-        className="w-full aspect-square"
-        resizeMode="cover"
+        style={{ width: '100%', aspectRatio: 1 }}
+        contentFit="cover"
+        cachePolicy="memory-disk"
+        transition={200}
       />
       <View className="p-2.5 gap-1">
         <Text className="text-foreground font-semibold text-sm" numberOfLines={2}>

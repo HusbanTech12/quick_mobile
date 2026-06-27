@@ -26,6 +26,7 @@ export default function OrdersScreen() {
               <Skeleton width="60%" height={14} />
             </View>
           )}
+          removeClippedSubviews
         />
       ) : isError ? (
         <View className="flex-1 items-center justify-center px-6">
@@ -56,6 +57,9 @@ export default function OrdersScreen() {
           refreshControl={
             <RefreshControl refreshing={isFetching} onRefresh={refetch} tintColor="#0066ff" />
           }
+          removeClippedSubviews
+          maxToRenderPerBatch={10}
+          windowSize={5}
         />
       )}
     </SafeAreaView>

@@ -231,6 +231,7 @@ export default function ProductsScreen() {
           numColumns={2}
           contentContainerClassName="px-2 pt-4"
           renderItem={renderSkeletonItem}
+          removeClippedSubviews
         />
       ) : isError ? (
         <View className="flex-1 items-center justify-center px-6">
@@ -253,6 +254,10 @@ export default function ProductsScreen() {
           contentContainerClassName="px-2 pt-4 pb-8"
           renderItem={renderProductItem}
           keyExtractor={(item) => String(item.id)}
+          removeClippedSubviews
+          maxToRenderPerBatch={10}
+          windowSize={7}
+          initialNumToRender={6}
           refreshControl={
             <RefreshControl refreshing={isFetching} onRefresh={onRefresh} tintColor="#0066ff" />
           }
