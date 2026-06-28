@@ -60,14 +60,44 @@ export default function HomeScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0066ff" />
         }
       >
-        <Text className="text-2xl font-bold text-foreground px-4 pt-4 pb-2">QuickStore</Text>
-
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-4 mb-6">
-          <View className="bg-brand/20 rounded-2xl p-6 w-[300px]">
-            <Text className="text-foreground text-xl font-bold">Premium Products</Text>
-            <Text className="text-muted text-sm mt-1">Shop the best deals today</Text>
+        <View className="mx-4 mb-6 mt-4">
+          <View
+            className="rounded-xl p-4 overflow-hidden"
+            style={{ backgroundColor: '#0f0f12', position: 'relative' }}
+          >
+            <View
+              style={{
+                position: 'absolute', top: 0, left: 20, right: 20, height: 1,
+                backgroundImage: 'linear-gradient(90deg, transparent, #0066ff, transparent)',
+              }}
+            />
+            <View
+              className="absolute w-2 h-2 rounded-full"
+              style={{ top: -3.5, left: '50%', marginLeft: -4, backgroundColor: '#0066ff' }}
+            />
+            <View
+              className="flex-row items-center"
+              style={{ backgroundColor: 'rgba(0,102,255,0.1)', borderWidth: 1, borderColor: 'rgba(0,102,255,0.3)', borderRadius: 6, paddingVertical: 3, paddingHorizontal: 8, marginBottom: 10, alignSelf: 'flex-start' }}
+            >
+              <View className="w-[5px] h-[5px] rounded-full mr-1.5" style={{ backgroundColor: '#0066ff' }} />
+              <Text style={{ color: '#60a5fa', fontSize: 10 }}>Premium Store</Text>
+            </View>
+            <Text className="text-white font-bold" style={{ fontSize: 22, letterSpacing: -0.5 }}>
+              Shop<Text style={{ color: '#0066ff' }}>.pk</Text>
+            </Text>
+            <Text style={{ color: '#52525b', fontSize: 11, marginBottom: 12, marginTop: 2 }}>
+              Best deals, delivered fast
+            </Text>
+            <TouchableOpacity
+              className="self-start"
+              style={{ backgroundColor: '#0066ff', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 8 }}
+              onPress={() => router.push('/(tabs)/products')}
+              activeOpacity={0.8}
+            >
+              <Text className="text-white font-semibold" style={{ fontSize: 12 }}>Explore Now →</Text>
+            </TouchableOpacity>
           </View>
-        </ScrollView>
+        </View>
 
         {Array.isArray(categories) && categories.length > 0 && (
           <View className="mb-6">

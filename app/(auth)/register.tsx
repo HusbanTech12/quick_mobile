@@ -32,13 +32,23 @@ export default function RegisterScreen() {
     setError('');
 
     try {
-      await registerUser({ email: email.trim(), username: username.trim(), password });
+      await registerUser({ email: email.trim(), name: username.trim(), password });
       router.replace('/(auth)/login');
     } catch (err: unknown) {
-      const apiError = err as { response?: { data?: { detail?: string } } };
-      setError(
-        apiError.response?.data?.detail || 'Registration failed. Please try again.'
-      );
+      const apiError = err as { response?: { data?: { detail?: string | { loc: string[]; msg: string }[] } } };
+      const detail = apiError.response?.data?.detail;
+      if (Array.isArray(detail)) {
+        const msgs = detail.map((d) => {
+          const field = d.loc[d.loc.length - 1];
+          if (d.msg === 'Field required') {
+            return `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+          }
+          return d.msg;
+        });
+        setError(msgs.join('. '));
+      } else {
+        setError(detail || 'Registration failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

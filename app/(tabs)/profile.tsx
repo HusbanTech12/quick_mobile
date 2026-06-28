@@ -21,7 +21,6 @@ export default function ProfileScreen() {
         onPress: async () => {
           await removeToken();
           logout();
-          router.replace('/(auth)/login');
         },
       },
     ]);

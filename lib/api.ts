@@ -41,7 +41,7 @@ function mapProduct(item: Record<string, unknown>) {
 
 export const registerUser = (data: {
   email: string;
-  username: string;
+  name: string;
   password: string;
 }) => api.post('/auth/register', data);
 

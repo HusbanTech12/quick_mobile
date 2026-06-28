@@ -1,7 +1,7 @@
 import '../global.css';
 import { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, Redirect, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -9,6 +9,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ToastProvider } from '../components/ui/Toast';
 import NetworkError from '../components/NetworkError';
 import { useNetwork } from '../hooks/useNetwork';
+import { useAuthStore } from '../store/authStore';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -51,12 +52,19 @@ function LayoutContent({ children, onReady }: { children: React.ReactNode; onRea
 
 export default function RootLayout() {
   const [appReady, setAppReady] = useState(false);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const segments = useSegments();
+  const isInTabs = segments[0] === '(tabs)';
 
   useEffect(() => {
     if (appReady) {
       SplashScreen.hideAsync();
     }
   }, [appReady]);
+
+  if (appReady && !isAuthenticated && isInTabs) {
+    return <Redirect href="/(auth)/login" />;
+  }
 
   return (
     <SafeAreaProvider>
