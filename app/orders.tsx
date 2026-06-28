@@ -1,7 +1,7 @@
 import { View, Text, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { ShoppingBag } from 'lucide-react-native';
+import { ShoppingBag, ArrowLeft } from 'lucide-react-native';
 import { useOrders } from '../hooks/useOrders';
 import OrderCard from '../components/OrderCard';
 import EmptyState from '../components/ui/EmptyState';
@@ -14,7 +14,12 @@ export default function OrdersScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <Text className="text-foreground text-xl font-bold px-4 pt-2 pb-4">My Orders</Text>
+      <View className="flex-row items-center px-4 pt-2 pb-4">
+        <TouchableOpacity onPress={() => router.back()} className="mr-3">
+          <ArrowLeft size={24} color="#fafafa" />
+        </TouchableOpacity>
+        <Text className="text-foreground text-xl font-bold">My Orders</Text>
+      </View>
       {isLoading ? (
         <FlatList
           data={[1, 2, 3]}
