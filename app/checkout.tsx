@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { StripeProvider, useStripe } from '@stripe/stripe-react-native';
+import { StripeProvider, useStripe, CardField } from '@stripe/stripe-react-native';
 import { useCartStore } from '../store/cartStore';
 import { useCartTotals } from '../hooks/useCart';
 import { createPaymentIntent, confirmPayment } from '../lib/api';
@@ -143,36 +143,19 @@ function PaymentStep({
   onPaymentSuccess: () => void;
   clientSecret: string | null;
 }) {
-  const { initPaymentSheet, presentPaymentSheet } = useStripe();
-  const [loading, setLoading] = useState(false);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    if (!clientSecret) return;
-    setLoading(true);
-    initPaymentSheet({
-      paymentIntentClientSecret: clientSecret,
-      merchantDisplayName: 'QuickStore',
-      defaultBillingDetails: {
-        name: 'QuickStore Customer',
-      },
-    })
-      .then(({ error }) => {
-        if (error) {
-          Alert.alert('Error', error.message || 'Failed to initialize payment');
-        } else {
-          setReady(true);
-        }
-      })
-      .finally(() => setLoading(false));
-  }, [clientSecret, initPaymentSheet]);
+  const { confirmPayment } = useStripe();
+  const [cardComplete, setCardComplete] = useState(false);
+  const [paying, setPaying] = useState(false);
 
   const handlePay = async () => {
-    setLoading(true);
-    const { error } = await presentPaymentSheet({});
+    if (!clientSecret) return;
+    setPaying(true);
+    const { error } = await confirmPayment(clientSecret, {
+      paymentMethodType: 'Card',
+    });
     if (error) {
       Alert.alert('Payment failed', error.message || 'Something went wrong');
-      setLoading(false);
+      setPaying(false);
     } else {
       onPaymentSuccess();
     }
@@ -185,14 +168,33 @@ function PaymentStep({
         <Text className="text-muted text-sm mb-1">Total Amount</Text>
         <Text className="text-foreground text-3xl font-bold">{formatPrice(total)}</Text>
       </View>
-      <Text className="text-muted text-sm">You will be redirected to a secure payment page.</Text>
+      <Text className="text-foreground text-sm font-semibold">Card Details</Text>
+      <View className="bg-card border border-border rounded-xl overflow-hidden p-2">
+        <CardField
+          postalCodeEnabled={true}
+          placeholders={{ number: '4242 4242 4242 4242' }}
+          cardStyle={{
+            backgroundColor: '#18181b',
+            textColor: '#fafafa',
+            placeholderColor: '#71717a',
+            borderColor: '#27272a',
+            borderRadius: 12,
+          }}
+          style={{
+            width: '100%',
+            height: 50,
+            marginVertical: 8,
+          }}
+          onCardChange={(details: { complete: boolean }) => setCardComplete(details.complete)}
+        />
+      </View>
       <TouchableOpacity
-        className={`rounded-xl py-4 items-center mt-2 ${loading || !ready ? 'bg-brand/50' : 'bg-brand'}`}
+        className={`rounded-xl py-4 items-center mt-2 ${paying || !cardComplete ? 'bg-brand/50' : 'bg-brand'}`}
         onPress={handlePay}
-        disabled={loading || !ready}
+        disabled={paying || !cardComplete}
         activeOpacity={0.8}
       >
-        {loading ? (
+        {paying ? (
           <ActivityIndicator color="#fafafa" size="small" />
         ) : (
           <Text className="text-foreground font-bold text-base">Pay {formatPrice(total)}</Text>
@@ -278,7 +280,6 @@ function CheckoutContent() {
   const [step, setStep] = useState(1);
   const [creatingPayment, setCreatingPayment] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [orderId, setOrderId] = useState<string | null>(null);
   const [placing, setPlacing] = useState(false);
   const [shipping, setShipping] = useState<ShippingInfo>({
     fullName: '',
@@ -306,7 +307,6 @@ function CheckoutContent() {
       };
       const res = await createPaymentIntent(payload);
       setClientSecret(res.data.clientSecret);
-      setOrderId(res.data.orderId);
       setStep(2);
     } catch (err: unknown) {
       const msg =
@@ -325,7 +325,6 @@ function CheckoutContent() {
   };
 
   const handlePlaceOrder = async () => {
-    if (!orderId) return;
     setPlacing(true);
     try {
       const piId = clientSecret?.split('_secret_')[0];
