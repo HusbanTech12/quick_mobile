@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { Package, LogOut, ChevronRight } from 'lucide-react-native';
+import { Package, LogOut, ChevronRight, User } from 'lucide-react-native';
 import Constants from 'expo-constants';
 import { useAuthStore } from '../../store/authStore';
 import { removeToken } from '../../lib/auth';
@@ -46,6 +46,15 @@ export default function ProfileScreen() {
         >
           <Package size={20} color="#0066ff" />
           <Text className="text-foreground font-semibold flex-1 ml-3">My Orders</Text>
+          <ChevronRight size={18} color="#71717a" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="bg-card rounded-xl p-4 border border-border flex-row items-center mt-2"
+          onPress={() => Alert.alert('Edit Profile', 'Coming soon')}
+          activeOpacity={0.8}
+        >
+          <User size={20} color="#0066ff" />
+          <Text className="text-foreground font-semibold flex-1 ml-3">Edit Profile</Text>
           <ChevronRight size={18} color="#71717a" />
         </TouchableOpacity>
       </View>
