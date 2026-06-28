@@ -362,7 +362,7 @@ function CheckoutContent() {
         className="flex-1"
       >
         <View className="flex-row items-center px-4 py-3 border-b border-border">
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity onPress={() => (router.canGoBack() ? router.back() : router.push('/(tabs)/cart'))}>
             <Text className="text-brand font-semibold">Back</Text>
           </TouchableOpacity>
           <Text className="text-foreground font-bold text-lg flex-1 text-center mr-10">

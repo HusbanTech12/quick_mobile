@@ -15,7 +15,7 @@ export default function OrdersScreen() {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <View className="flex-row items-center px-4 pt-2 pb-4">
-        <TouchableOpacity onPress={() => router.back()} className="mr-3">
+        <TouchableOpacity onPress={() => (router.canGoBack() ? router.back() : router.push('/(tabs)/profile'))} className="mr-3">
           <ArrowLeft size={24} color="#fafafa" />
         </TouchableOpacity>
         <Text className="text-foreground text-xl font-bold">My Orders</Text>

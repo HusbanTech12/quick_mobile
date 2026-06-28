@@ -60,7 +60,7 @@ export default function EditProfileScreen() {
         setAuth({ ...user, ...res.data }, token);
       }
       showToast({ message: 'Profile saved', type: 'success' });
-      router.back();
+      if (router.canGoBack()) router.back(); else router.push('/(tabs)/profile');
     } catch (err: unknown) {
       const msg =
         err && typeof err === 'object' && 'response' in err
@@ -78,7 +78,7 @@ export default function EditProfileScreen() {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <View className="flex-row items-center px-4 pt-2 pb-4">
-        <TouchableOpacity onPress={() => router.back()} className="mr-3">
+        <TouchableOpacity onPress={() => (router.canGoBack() ? router.back() : router.push('/(tabs)/profile'))} className="mr-3">
           <ArrowLeft size={24} color="#fafafa" />
         </TouchableOpacity>
         <Text className="text-foreground text-xl font-bold">Edit Profile</Text>

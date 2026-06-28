@@ -73,7 +73,7 @@ export default function ProductDetailScreen() {
           />
           <TouchableOpacity
             className="absolute top-4 left-4 bg-card/80 rounded-full p-2"
-            onPress={() => router.back()}
+            onPress={() => (router.canGoBack() ? router.back() : router.push('/(tabs)/products'))}
             activeOpacity={0.8}
           >
             <ArrowLeft size={22} color="#fafafa" />
