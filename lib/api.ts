@@ -90,4 +90,18 @@ export const getOrders = () => api.get('/orders/');
 
 export const getOrderById = (id: string) => api.get(`/orders/${id}`);
 
+export const createPaymentIntent = (data: {
+  order_data: {
+    shipping_name: string;
+    shipping_address: string;
+    shipping_city: string;
+    shipping_email: string;
+    items: { product_id: string; quantity: number; price: number }[];
+  };
+  payment_method_types?: string[];
+}) => api.post('/stripe/create-payment-intent', data);
+
+export const confirmPayment = (paymentIntentId: string) =>
+  api.post(`/stripe/confirm-payment?payment_intent_id=${paymentIntentId}`);
+
 export default api;
