@@ -4,6 +4,7 @@ export interface User {
   username: string;
   is_active: boolean;
   is_admin: boolean;
+  avatar_url?: string;
 }
 
 export interface Product {

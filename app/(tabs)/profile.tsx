@@ -1,5 +1,6 @@
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Package, LogOut, ChevronRight, User } from 'lucide-react-native';
 import Constants from 'expo-constants';
@@ -32,9 +33,18 @@ export default function ProfileScreen() {
     <SafeAreaView className="flex-1 bg-background">
       <Text className="text-foreground text-xl font-bold px-4 pt-2 pb-4">Profile</Text>
       <View className="items-center px-4 pb-6">
-        <View className="w-20 h-20 rounded-full bg-brand items-center justify-center mb-3">
-          <Text className="text-foreground text-2xl font-bold">{initials}</Text>
-        </View>
+        {user?.avatar_url ? (
+          <Image
+            source={{ uri: user.avatar_url }}
+            className="w-20 h-20 rounded-full mb-3"
+            contentFit="cover"
+            cachePolicy="memory-disk"
+          />
+        ) : (
+          <View className="w-20 h-20 rounded-full bg-brand items-center justify-center mb-3">
+            <Text className="text-foreground text-2xl font-bold">{initials}</Text>
+          </View>
+        )}
         <Text className="text-foreground text-lg font-bold">{user?.username || 'User'}</Text>
         <Text className="text-muted text-sm">{user?.email || ''}</Text>
       </View>
