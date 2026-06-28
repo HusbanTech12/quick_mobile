@@ -50,7 +50,7 @@ export default function ProfileScreen() {
         </TouchableOpacity>
         <TouchableOpacity
           className="bg-card rounded-xl p-4 border border-border flex-row items-center mt-2"
-          onPress={() => Alert.alert('Edit Profile', 'Coming soon')}
+          onPress={() => router.push('/edit-profile')}
           activeOpacity={0.8}
         >
           <User size={20} color="#0066ff" />

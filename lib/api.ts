@@ -56,6 +56,9 @@ export const loginUser = (username: string, password: string) => {
 
 export const getCurrentUser = () => api.get('/auth/me');
 
+export const updateUserProfile = (data: { name?: string; email?: string }) =>
+  api.put('/users/me', data);
+
 export const getProducts = async (params?: {
   skip?: number;
   limit?: number;
