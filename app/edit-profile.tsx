@@ -8,6 +8,7 @@ import { ArrowLeft, Camera } from 'lucide-react-native';
 import { useAuthStore } from '../store/authStore';
 import { updateUserProfile } from '../lib/api';
 import { getInitials } from '../lib/utils';
+import { useToast } from '../components/ui/Toast';
 import Input from '../components/ui/Input';
 
 export default function EditProfileScreen() {
@@ -16,6 +17,7 @@ export default function EditProfileScreen() {
   const setAuth = useAuthStore((s) => s.setAuth);
   const setAvatar = useAuthStore((s) => s.setAvatar);
   const token = useAuthStore((s) => s.token);
+  const { showToast } = useToast();
 
   const [name, setName] = useState(user?.username || '');
   const [email, setEmail] = useState(user?.email || '');
@@ -57,9 +59,8 @@ export default function EditProfileScreen() {
       if (user && token) {
         setAuth({ ...user, ...res.data }, token);
       }
-      Alert.alert('Success', 'Profile updated', [
-        { text: 'OK', onPress: () => router.back() },
-      ]);
+      showToast({ message: 'Profile saved', type: 'success' });
+      router.back();
     } catch (err: unknown) {
       const msg =
         err && typeof err === 'object' && 'response' in err

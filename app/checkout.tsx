@@ -16,6 +16,7 @@ import { StripeProvider, CardField } from '@stripe/stripe-react-native';
 import { useCartStore } from '../store/cartStore';
 import { useCartTotals, useCreateOrder } from '../hooks/useCart';
 import CheckoutStepper from '../components/CheckoutStepper';
+import { useToast } from '../components/ui/Toast';
 import { formatPrice } from '../lib/utils';
 
 const STRIPE_KEY = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || '';
@@ -207,6 +208,7 @@ function ReviewStep({ shipping, onPlaceOrder }: { shipping: ShippingInfo; onPlac
 
 export default function CheckoutScreen() {
   const router = useRouter();
+  const { showToast } = useToast();
   const [step, setStep] = useState(1);
   const [shipping, setShipping] = useState<ShippingInfo>({
     fullName: '',
@@ -220,6 +222,7 @@ export default function CheckoutScreen() {
   const handlePlaceOrder = async () => {
     try {
       await createOrder.mutateAsync();
+      showToast({ message: 'Order placed! Thank you.', type: 'success' });
       router.replace('/order/success');
     } catch {
       Alert.alert('Order Failed', 'Something went wrong. Please try again.');

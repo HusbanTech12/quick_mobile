@@ -7,11 +7,13 @@ import Constants from 'expo-constants';
 import { useAuthStore } from '../../store/authStore';
 import { removeToken } from '../../lib/auth';
 import { getInitials } from '../../lib/utils';
+import { useToast } from '../../components/ui/Toast';
 
 export default function ProfileScreen() {
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
+  const { showToast } = useToast();
 
   const handleLogout = () => {
     Alert.alert('Logout', 'Are you sure you want to logout?', [
@@ -20,6 +22,7 @@ export default function ProfileScreen() {
         text: 'Logout',
         style: 'destructive',
         onPress: async () => {
+          showToast({ message: 'Logged out successfully', type: 'success' });
           await removeToken();
           logout();
         },

@@ -14,10 +14,12 @@ import { useRouter, Link } from 'expo-router';
 import { loginUser, getCurrentUser } from '../../lib/api';
 import { saveToken } from '../../lib/auth';
 import { useAuthStore } from '../../store/authStore';
+import { useToast } from '../../components/ui/Toast';
 
 export default function LoginScreen() {
   const router = useRouter();
   const setAuth = useAuthStore((state) => state.setAuth);
+  const { showToast } = useToast();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -48,6 +50,7 @@ export default function LoginScreen() {
       const userRes = await getCurrentUser();
       setAuth(userRes.data, token);
 
+      showToast({ message: 'Welcome back!', type: 'success' });
       router.replace('/(tabs)/');
     } catch (err: unknown) {
       const apiError = err as { response?: { data?: { detail?: string } } };

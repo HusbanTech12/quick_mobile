@@ -12,9 +12,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Link } from 'expo-router';
 import { registerUser } from '../../lib/api';
+import { useToast } from '../../components/ui/Toast';
 
 export default function RegisterScreen() {
   const router = useRouter();
+  const { showToast } = useToast();
 
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
@@ -33,6 +35,7 @@ export default function RegisterScreen() {
 
     try {
       await registerUser({ email: email.trim(), name: username.trim(), password });
+      showToast({ message: 'Account created! Please login.', type: 'success' });
       router.replace('/(auth)/login');
     } catch (err: unknown) {
       const apiError = err as { response?: { data?: { detail?: string | { loc: string[]; msg: string }[] } } };
